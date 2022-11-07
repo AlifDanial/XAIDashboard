@@ -19,6 +19,7 @@ import pandas as pd
 import csv
 from pathlib import Path
 
+projecttitle = ""
 auto=0
 algo = [RandomForestRegressor]
 #import data
@@ -291,7 +292,7 @@ if auto == 1:
                 ])
 
 
-        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, hide_header=True, plot_sample=1000).run()
+        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000).run()
 
 
 else: 
@@ -500,4 +501,4 @@ else:
                     ], style=dict(margin=10)),            
                 ])
 
-        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, hide_header=True, plot_sample=1000).run()
+        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000).run()

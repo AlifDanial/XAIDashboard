@@ -498,4 +498,4 @@ else:
                 ])
 
 
-        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, hide_header=True, plot_sample=1000).run()
+        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title="", plot_sample=1000).run()
