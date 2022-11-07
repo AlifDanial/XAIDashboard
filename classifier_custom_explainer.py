@@ -296,9 +296,27 @@ if auto == 1:
 
 
 else: 
-
+    b = []
     for i in algo:
         model = i().fit(x_train, y_train.values.ravel())
+
+        from sklearn import metrics
+        from sklearn.metrics import balanced_accuracy_score
+        from sklearn.metrics import average_precision_score
+        from sklearn.metrics import roc_auc_score
+        from sklearn.metrics import brier_score_loss
+
+        y_pred = model.predict(x_test) 
+        x = metrics.accuracy_score(y_test, y_pred) 
+        y = balanced_accuracy_score(y_test, y_pred) 
+        z = average_precision_score(y_test, y_pred) 
+        z1 = roc_auc_score(y_test, y_pred)
+        z2 = brier_score_loss(y_test, y_pred)
+        b.append((x + y + z1)/3 / 0.01)
+        print(x,y,z,z1,z2)
+    
+        print(b)
+        best_score = max(b)
 
         explainer = ClassifierExplainer(model, x_test, y_test,                                 
                                         cats=catCols,  
