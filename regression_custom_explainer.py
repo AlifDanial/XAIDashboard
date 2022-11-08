@@ -315,7 +315,7 @@ if auto == 1:
                 ])
 
 
-        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000).run()
+        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000, header_hide_selector=True).run()
 
 
 else: 
@@ -533,4 +533,4 @@ else:
                     ], style=dict(margin=10)),            
                 ])
 
-        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000).run()
+        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000, header_hide_selector=True).run()
