@@ -98,8 +98,8 @@ if auto == 1:
             
     
     print(b)
-    best_score = max(b)
-    index = b.index(best_score)
+    init_score = min(b)
+    index = b.index(init_score)
 
     def switch(index):
         if index == 0:
@@ -113,6 +113,16 @@ if auto == 1:
 
     print(switch(index))
     automodel = switch(index)
+
+    from sklearn import preprocessing
+    import numpy as np
+    b = preprocessing.normalize([b])
+    smallest = np.min(b)
+    #save best score as final best score in home page
+    best_score=((1 - smallest) / 0.01)
+    print(smallest)
+    print(best_score)
+
     for i in automodel:
         model = i().fit(x_train, y_train.values.ravel())
         explainer = RegressionExplainer(model, x_test, y_test,                                 
@@ -323,7 +333,16 @@ else:
        
     
         print(b)
-        best_score = max(b)
+        init_score = max(b)
+
+        from sklearn import preprocessing
+        import numpy as np
+        b = preprocessing.normalize([b])
+        smallest = np.min(b)
+        #save best score as final best score in home page
+        best_score=((1 - smallest) / 0.01)
+        print(smallest)
+        print(best_score)
 
         explainer = RegressionExplainer(model, x_test, y_test,                                 
                                 cats=catCols,  
