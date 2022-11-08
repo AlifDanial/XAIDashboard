@@ -19,25 +19,40 @@ import pandas as pd
 import csv
 from pathlib import Path
 
+projecttitle = ""
 auto=0
 algo = [RandomForestClassifier]
+
 #import data
 train_csv = Path(__file__).resolve().parent / 'titanic.csv'
 df = pd.read_csv(train_csv)
 has_header = csv.Sniffer().has_header(open(train_csv).read(2048))
 
-#id column
-IDColumn = "PassengerId"
+#column variables
+IDColumn = "Name"
+predict = "Survived"
+drop = ['SibSp','Parch','PassengerId']
+
+#id column set 
 df.set_index(IDColumn, drop=True, inplace=True)
 df.index.name = IDColumn
 
-#prediction column
-str = "Survived"
-result = str.replace(' ', '_')
+#predict to columns
+result = predict.replace(' ', '_')
 
+#convert list drop
+converter = lambda x: x.replace(' ', '_')
+drop = list(map(converter, drop))
+drop
+
+#space to underscore for all headers
 if has_header == False:
   df.columns = ['co_' + str(i+1) for i in range(len(df.iloc[0].values))]
 df.columns = df.columns.str.replace(' ','_')
+
+#drop unused columns
+df.drop(columns=drop, axis=1, inplace=True)
+
 
 cols = df.columns
 cols_dtypes = df.dtypes
@@ -292,7 +307,7 @@ if auto == 1:
                 ])
 
 
-        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, hide_header=True, plot_sample=1000).run()
+        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000).run()
 
 
 else: 
@@ -498,4 +513,4 @@ else:
                 ])
 
 
-        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title="", plot_sample=1000).run()
+        ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000).run()
