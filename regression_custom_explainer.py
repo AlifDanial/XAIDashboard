@@ -4,46 +4,47 @@ from sklearn.tree import DecisionTreeClassifier
 from lightgbm import LGBMClassifier
 from xgboost.sklearn import XGBClassifier
 from sklearn.linear_model import LogisticRegression
-
 from explainerdashboard import *
 from explainerdashboard.datasets import *
 from explainerdashboard.custom import *
-
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-
 from explainerdashboard.custom import *
-
 from explainerdashboard import ExplainerDashboard
 import pandas as pd
 import csv
 from pathlib import Path
 
+#variables to be passed
 projecttitle = ""
+catCols = ""
 auto=0
 algo = [RandomForestRegressor]
+IDColumn = ""
+predict = "Final_Score"
+drop = ['address','Fedu','Mjob']
+descriptions = {}
+unit = ""
 
 #import data
 train_csv = Path(__file__).resolve().parent / 'StudentPerformance_Prediction_Regression.csv'
 df = pd.read_csv(train_csv)
 has_header = csv.Sniffer().has_header(open(train_csv).read(2048))
 
-#column variables
-IDColumn = "age"
-predict = "Final_Score"
-drop = ['address','Fedu','Mjob']
-
 #id column set 
-df.set_index(IDColumn, drop=True, inplace=True)
-df.index.name = IDColumn
+if(IDColumn != ""):
+    IDColumn = IDColumn.replace(' ', '_')
+    df.set_index(IDColumn, drop=True, inplace=True)
+    df.index.name = IDColumn
 
 #predict to columns
 result = predict.replace(' ', '_')
 
 #convert list drop
-converter = lambda x: x.replace(' ', '_')
-drop = list(map(converter, drop))
-drop
+if drop != []:
+    converter = lambda x: x.replace(' ', '_')
+    drop = list(map(converter, drop))
+    drop
 
 #space to underscore for all headers
 if has_header == False:
@@ -51,7 +52,8 @@ if has_header == False:
 df.columns = df.columns.str.replace(' ','_')
 
 #drop unused columns
-df.drop(columns=drop, axis=1, inplace=True)
+if drop != []:
+    df.drop(columns=drop, axis=1, inplace=True)
 
 cols = df.columns
 cols_dtypes = df.dtypes
@@ -140,8 +142,8 @@ if auto == 1:
         model = i().fit(x_train, y_train.values.ravel())
         explainer = RegressionExplainer(model, x_test, y_test,                                 
                                 cats=catCols,  
-                                descriptions={},
-                                units="$", shap_kwargs=dict(check_additivity=False))
+                                descriptions=descriptions,
+                                units=unit, shap_kwargs=dict(check_additivity=False))
 
         explainer.plot_contributions(0)
 
@@ -359,8 +361,8 @@ else:
 
         explainer = RegressionExplainer(model, x_test, y_test,                                 
                                 cats=catCols,  
-                                descriptions={},
-                                units="$", shap_kwargs=dict(check_additivity=False))
+                                descriptions=descriptions,
+                                units=unit, shap_kwargs=dict(check_additivity=False))
 
         explainer.plot_contributions(0)
 
@@ -534,3 +536,4 @@ else:
                 ])
 
         ExplainerDashboard(explainer, [CustomDashboard, CustomPredictionsTab, Classif], boostrap=dbc.themes.FLATLY, title=projecttitle, plot_sample=1000, header_hide_selector=True).run()
+        

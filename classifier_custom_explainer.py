@@ -3,47 +3,49 @@ from sklearn.tree import DecisionTreeClassifier
 from lightgbm import LGBMClassifier
 from xgboost.sklearn import XGBClassifier
 from sklearn.linear_model import LogisticRegression
-
 from explainerdashboard import *
 from explainerdashboard.datasets import *
 from explainerdashboard.custom import *
-
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-
 from explainerdashboard.custom import *
-
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from explainerdashboard import ExplainerDashboard
 import pandas as pd
 import csv
 from pathlib import Path
 
+#variables to be passed
 projecttitle = ""
+catCols = ""
 auto=0
 algo = [RandomForestClassifier]
+IDColumn = "Name"
+predict = "Survived"
+drop = ['SibSp','Parch','PassengerId']
+descriptions = {}
+label0 = "died"
+label1 = "survived"
 
 #import data
 train_csv = Path(__file__).resolve().parent / 'titanic.csv'
 df = pd.read_csv(train_csv)
 has_header = csv.Sniffer().has_header(open(train_csv).read(2048))
 
-#column variables
-IDColumn = "Name"
-predict = "Survived"
-drop = ['SibSp','Parch','PassengerId']
-
 #id column set 
-df.set_index(IDColumn, drop=True, inplace=True)
-df.index.name = IDColumn
+if(IDColumn != ""):
+    IDColumn = IDColumn.replace(' ', '_')
+    df.set_index(IDColumn, drop=True, inplace=True)
+    df.index.name = IDColumn
 
 #predict to columns
 result = predict.replace(' ', '_')
 
 #convert list drop
-converter = lambda x: x.replace(' ', '_')
-drop = list(map(converter, drop))
-drop
+if drop != []:
+    converter = lambda x: x.replace(' ', '_')
+    drop = list(map(converter, drop))
+    drop
 
 #space to underscore for all headers
 if has_header == False:
@@ -51,7 +53,8 @@ if has_header == False:
 df.columns = df.columns.str.replace(' ','_')
 
 #drop unused columns
-df.drop(columns=drop, axis=1, inplace=True)
+if drop != []:
+    df.drop(columns=drop, axis=1, inplace=True)
 
 
 cols = df.columns
@@ -128,9 +131,9 @@ if auto == 1:
     for i in automodel:
         model = i().fit(x_train, y_train.values.ravel())
         explainer = ClassifierExplainer(model, x_test, y_test,                                 
-                                cats=catCols,  
-                                descriptions={},
-                                labels=['Stayed', 'Left Company'], shap_kwargs=dict(check_additivity=False))
+                                        cats=catCols,  
+                                        descriptions=descriptions,
+                                        labels=[label0, label1], shap_kwargs=dict(check_additivity=False))
 
         explainer.plot_contributions(0)
 
@@ -289,8 +292,8 @@ if auto == 1:
                     dbc.Row([
                         dbc.Col([
                             html.H3("Visualize Precision and Recall"),
-                            html.Div("Precision can be observed when True Positives (predicted " f"{self.explainer.labels[0]}" " and actual " f"{self.explainer.labels[0]}" ") are higher than False Positives " "(predicted " f"{self.explainer.labels[1]}" " and actual " f"{self.explainer.labels[0]}"")."),
-                            html.Div("Recall can be observed when True Positives are higher than False Negatives" "(predicted " f"{self.explainer.labels[0]}" " and actual " f"{self.explainer.labels[1]}"")."),
+                            html.Div("Precision can be observed when True Positives (predicted " f"{self.explainer.labels[0]}" " and actual" f"{self.explainer.labels[0]}" ") are higher than False Positives " "(predicted " f"{self.explainer.labels[1]}" " and actual" f"{self.explainer.labels[0]}"")."),
+                            html.Div("Recall can be observed when True Positives are higher than False Negatives" "(predicted " f"{self.explainer.labels[0]}" " and actual" f"{self.explainer.labels[1]}"")."),
                             # self.interaction.layout()
                         ], style=dict(margin=10)),
                     ], style=dict(margin=10)),            
@@ -335,8 +338,8 @@ else:
 
         explainer = ClassifierExplainer(model, x_test, y_test,                                 
                                         cats=catCols,  
-                                        descriptions={},
-                                        labels=['Stayed', 'Left Company'], shap_kwargs=dict(check_additivity=False))
+                                        descriptions=descriptions,
+                                        labels=[label0, label1], shap_kwargs=dict(check_additivity=False))
 
         explainer.plot_contributions(0)
 
